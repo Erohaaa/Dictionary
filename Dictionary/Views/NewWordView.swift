@@ -11,24 +11,22 @@ struct NewWordView: View {
     @State var english = ""
     @State var ukrainian = ""
     @State var newWordsAdded: [String] = []
-
+    
     @Binding var showNewWordView: Bool
     @Environment(\.managedObjectContext) var context
     @FocusState private var fieldInFocus: OnboardingField?
     
     var body: some View {
         ZStack {
-            
             VStack {
                 AddingNewWordView(english: $english, ukrainian: $ukrainian, newWordsAdded: $newWordsAdded, showNewWordView: $showNewWordView)
-                    
+                
                 Spacer()
             }
             .padding(.horizontal, 16)
             .padding(.top, 50)
             .cornerRadius(50)
             .ignoresSafeArea()
-            
         }
         .background(.white.opacity(0.001))
         .onSubmit {
@@ -61,11 +59,10 @@ struct NewWordView: View {
             print(error.localizedDescription)
         }
     }
-    
-    
-    
 }
 
+
+//MARK: - Canvas
 struct NewWordView_Previews: PreviewProvider {
     static var previews: some View {
         NewWordView(showNewWordView: .constant(false))
@@ -73,6 +70,7 @@ struct NewWordView_Previews: PreviewProvider {
 }
 
 
+//MARK: - AddingNewWordView
 struct AddingNewWordView: View {
     
     @Binding var english: String
@@ -81,12 +79,12 @@ struct AddingNewWordView: View {
     @Binding var showNewWordView: Bool
     @Environment(\.managedObjectContext) var context
     @FocusState var focusedField: OnboardingField?
-
+    
     
     var body: some View {
         VStack {
             VStack {
-// Кнопки
+                // Кнопки
                 HStack(alignment: .top) {
                     Button {
                         self.showNewWordView.toggle()
@@ -117,8 +115,7 @@ struct AddingNewWordView: View {
                 
                 Spacer()
                 
-                
-// TextField 1
+                // TextField 1
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Слово англійською".uppercased())
                         .font(.system(.headline, design: .rounded))
@@ -138,8 +135,8 @@ struct AddingNewWordView: View {
                         )
                 }
                 .padding(.horizontal, 6)
-
-// TextField 2
+                
+                // TextField 2
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Переклад українською".uppercased())
                         .font(.system(.headline, design: .rounded))
@@ -159,15 +156,14 @@ struct AddingNewWordView: View {
                         )
                 }
                 .padding(.horizontal, 6)
-
+                
             }
             .padding(.bottom, 6)
             .padding(.horizontal, 6)
             .frame(height: 230)
             .background(Color("color2"))
             
-            
-// Додані слова
+            // Додані слова
             if newWordsAdded.isEmpty {
                 Text("Ви ще не додали жодного нового слова.")
                     .multilineTextAlignment(.center)
@@ -192,7 +188,6 @@ struct AddingNewWordView: View {
         }
         .background(Color("color3"))
         .cornerRadius(20)
-
     }
     
     private func save() {
@@ -219,9 +214,4 @@ struct AddingNewWordView: View {
         }
         return text
     }
-}
-
-enum OnboardingField: Hashable {
-    case englishFieldInFocus
-    case ukranianFieldInFocus
 }

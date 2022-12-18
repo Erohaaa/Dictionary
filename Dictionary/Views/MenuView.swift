@@ -13,16 +13,14 @@ struct MenuView: View {
     
     
     var body: some View {
-        
         ZStack {
-            
             Color.white.opacity(0.001)
                 .ignoresSafeArea()
                 .onTapGesture {
                     showMenuView = false
                 }
+            
             VStack(spacing: 0) {
-                
                 VStack(spacing: 0) {
                     Text("Меню")
                         .padding(.horizontal, 6)
@@ -34,7 +32,6 @@ struct MenuView: View {
                 .padding(.top, 70)
                 
                 VStack {
-                    
                     Button {
                         depictedView = .showDictionaryView
                         showMenuView = false
@@ -46,12 +43,10 @@ struct MenuView: View {
                     }
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 80)
                     .background(.black.opacity(depictedView == .showDictionaryView ? 0.3 : 0))
-
-                    
                     
                     Button {
                         depictedView = .showRepeatWordView
-                        showMenuView = false                        
+                        showMenuView = false
                     } label: {
                         Image("repeat")
                             .resizable()
@@ -59,7 +54,6 @@ struct MenuView: View {
                     }
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 80)
                     .background(.black.opacity(depictedView == .showRepeatWordView ? 0.3 : 0))
-
                 }
                 .padding(.vertical, 12)
             }
@@ -69,30 +63,13 @@ struct MenuView: View {
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
             .ignoresSafeArea()
         }
-        
     }
 }
 
+
+//MARK: - Canvas
 struct MenuView_Previews: PreviewProvider {
     static var previews: some View {
         MenuView(showMenuView: .constant(false), depictedView: .constant(.showRepeatWordView))
     }
 }
-
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(radius: radius, corners: corners))
-    }
-}
-
-struct RoundedCorner: Shape {
-    
-    var radius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
-    
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-        return Path(path.cgPath)
-    }
-}
-

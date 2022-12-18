@@ -9,12 +9,14 @@ import SwiftUI
 
 struct MainView: View {
     
-    @State var showNewWordView = false
+    let screen = UIScreen.main.bounds
+    @State var showMenuView = false
     @State var showAddEditView = false
+    @State var showNewWordView = false
     @State var showDeleteButton = false
     @State var showAddToRepeatButton = false
-    @State var showMenuView = false
     @State var depictedView: MenuViewModel = .showDictionaryView
+    
     
     var body: some View {
         ZStack {
@@ -29,7 +31,6 @@ struct MainView: View {
                     .blur(radius: showMenuView ? 8 : 0, opaque: true)
                     .ignoresSafeArea()
             }
-
             
             if showAddEditView {
                 FunctionalView(showAddEditView: $showAddEditView, showNewWordView: $showNewWordView, showDeleteButton: $showDeleteButton, showAddToRepeatButton: $showAddToRepeatButton, depictedView: $depictedView)
@@ -42,20 +43,16 @@ struct MainView: View {
             NewWordView(showNewWordView: $showNewWordView)
                 .offset(y: showNewWordView ? -0 : -screen.height)
                 .animation(.spring(response: 0.6, dampingFraction: 0.9, blendDuration: 0))
-            
-            
         }
-        
-
     }
 }
 
+
+//MARK: - Canvas
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView()
-                .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-
-
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
 

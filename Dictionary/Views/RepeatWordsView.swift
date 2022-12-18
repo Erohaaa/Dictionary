@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RepeatWordsView: View {
+    
     var wordsInRepeat: Int {
         var count = 0
         for word in words {
@@ -26,9 +27,7 @@ struct RepeatWordsView: View {
         ])
     var words: FetchedResults<Word>
     
-    
-    
-    
+        
     var body: some View {
         NavigationView {
             ZStack {
@@ -44,7 +43,7 @@ struct RepeatWordsView: View {
                         }
                     }
                     .padding(.top, 24)
-
+                    
                 } else {
                     Text("Розділ повторення пустий, перейдіть в Словник та додайте потрібні вам слова для повторення.")
                         .font(.system(size: 25))
@@ -60,21 +59,19 @@ struct RepeatWordsView: View {
                         if showDeleteButton {
                             Button(action: {
                                 showDeleteButton = false
-                                
                             }) {
                                 Image(systemName: "xmark")
                             }
+                            
                         } else {
+                            
                             Button(action: {
                                 showEditView.toggle()
-                                
                             }) {
                                 Image(systemName: showEditView ? "chevron.up" : "chevron.down")
                             }
                         }
                     }
-                    
-                    
                 }
                 
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -84,10 +81,8 @@ struct RepeatWordsView: View {
                         showDeleteButton = false
                     } label: {
                         Image(systemName: "text.justify")
-                        
                     }
                 }
-                
             }
             .accentColor(.white)
         }
@@ -97,14 +92,17 @@ struct RepeatWordsView: View {
 }
 
 
+//MARK: - Canvas
 struct RepeatWordsView_Previews: PreviewProvider {
     static var previews: some View {
         RepeatWordsView(showMenuView: .constant(false), showEditView: .constant(false), showDeleteButton: .constant(true))
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-
+        
     }
 }
 
+
+//MARK: - DesignRepeatWordsView
 struct DesignRepeatWordsView: View {
     @Environment(\.managedObjectContext) var context
     @State var seeTranslation = false
@@ -118,7 +116,7 @@ struct DesignRepeatWordsView: View {
                     Image(seeTranslation ? "ua" : "uk")
                         .resizable()
                         .frame(height: 100)
-                        .blur(radius: 3)
+                        .blur(radius: 3, opaque: true)
                     Color.black
                         .opacity(0.5)
                         .background(.black.opacity(0.2))
@@ -126,7 +124,8 @@ struct DesignRepeatWordsView: View {
                 }
                 .overlay {
                     Rectangle()
-                        .stroke(Color(.white), lineWidth: 3)
+                        .stroke(Color(.white), lineWidth: 1)
+                        .padding(1)
                 }
                 
                 Text(seeTranslation ? word.ukrainian : word.english)
@@ -137,7 +136,6 @@ struct DesignRepeatWordsView: View {
                     .minimumScaleFactor(0.3)
                     .rotation3DEffect(Angle(degrees: seeTranslation ? 180 : 0), axis: (x: 10, y: 0, z: 0))
             }
-            
             .rotation3DEffect(Angle(degrees: (seeTranslation ? 180 : 0)), axis: (x: 10, y: 0, z: 0))
             .animation(.spring(response: 0.7, dampingFraction: 0.7, blendDuration: 0))
             .onTapGesture {
@@ -163,11 +161,8 @@ struct DesignRepeatWordsView: View {
                 .background(Color("color5"))
                 .cornerRadius(20, corners: [.topRight, .bottomRight])
             }
-                
-                
         }
+        .padding(.top, 6)
         .padding(.horizontal, 24)
-
     }
-    
 }
