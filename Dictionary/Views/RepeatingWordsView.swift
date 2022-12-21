@@ -1,25 +1,26 @@
 //
 //  RepeatWordsView.swift
-//  EnglishWords
+//  Dictionary
 //
 //  Created by Виталя on 08.12.2022.
 //
 
 import SwiftUI
 
-struct RepeatWordsView: View {
+struct RepeatingWordsView: View {
     
-    var wordsInRepeat: Int {
-        var count = 0
+    var wordsInRepeat: Bool {
+        var count = false
         for word in words {
             if word.inRepetition {
-                count = 1
+                count = true
             }
         }
         return count
     }
+    
     @Binding var showMenuView: Bool
-    @Binding var showEditView: Bool
+    @Binding var showFunctionalView: Bool
     @Binding var showDeleteButton: Bool
     @FetchRequest(
         sortDescriptors: [
@@ -31,31 +32,28 @@ struct RepeatWordsView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color("color1")
+                Color("color3")
                     .ignoresSafeArea()
                 
-                if wordsInRepeat == 1 {
+                if wordsInRepeat {
                     ScrollView(showsIndicators: false) {
                         ForEach(words, id: \.self) { word in
                             if word.inRepetition {
-                                DesignRepeatWordsView(showDeleteButton: $showDeleteButton, word: word)
+                                RepeatingWordsViewDesignView(showDeleteButton: $showDeleteButton, word: word)
                             }
                         }
                     }
-                    .padding(.top, 24)
+                    .padding(.top)
                     
                 } else {
-                    Text("Розділ повторення пустий, перейдіть в Словник та додайте потрібні вам слова для повторення.")
-                        .font(.system(size: 25))
-                        .multilineTextAlignment(.center)
-                        .padding()
+                    RepeatingWordsViewIsEmpty()
                 }
             }
             .navigationTitle("Повторення слів")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    if wordsInRepeat == 1 {
+                    if wordsInRepeat {
                         if showDeleteButton {
                             Button(action: {
                                 showDeleteButton = false
@@ -64,12 +62,12 @@ struct RepeatWordsView: View {
                             }
                             
                         } else {
-                            
                             Button(action: {
-                                showEditView.toggle()
+                                showFunctionalView.toggle()
                             }) {
-                                Image(systemName: showEditView ? "chevron.up" : "chevron.down")
+                                Image(systemName: showFunctionalView ? "chevron.up" : "chevron.down")
                             }
+                            
                         }
                     }
                 }
@@ -77,7 +75,7 @@ struct RepeatWordsView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
                         showMenuView = true
-                        showEditView = false
+                        showFunctionalView = false
                         showDeleteButton = false
                     } label: {
                         Image(systemName: "text.justify")
@@ -86,16 +84,14 @@ struct RepeatWordsView: View {
             }
             .accentColor(.white)
         }
-        .shadow(radius: 20)
     }
-    
 }
 
 
 //MARK: - Canvas
 struct RepeatWordsView_Previews: PreviewProvider {
     static var previews: some View {
-        RepeatWordsView(showMenuView: .constant(false), showEditView: .constant(false), showDeleteButton: .constant(true))
+        RepeatingWordsView(showMenuView: .constant(false), showFunctionalView: .constant(false), showDeleteButton: .constant(true))
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         
     }
@@ -103,34 +99,32 @@ struct RepeatWordsView_Previews: PreviewProvider {
 
 
 //MARK: - DesignRepeatWordsView
-struct DesignRepeatWordsView: View {
+struct RepeatingWordsViewDesignView: View {
     @Environment(\.managedObjectContext) var context
     @State var seeTranslation = false
     @Binding var showDeleteButton: Bool
     var word: Word
     
     var body: some View {
-        HStack {
+        HStack(spacing: 1) {
             ZStack {
                 ZStack {
-                    Image(seeTranslation ? "ua" : "uk")
-                        .resizable()
-                        .frame(height: 100)
-                        .blur(radius: 3, opaque: true)
-                    Color.black
-                        .opacity(0.5)
+                    Color(seeTranslation ? "color1" : "color2")
+                        .frame(height: 80)
+                        .blur(radius: 5, opaque: true)
+                    Color.white
+                        .opacity(0.2)
                         .background(.black.opacity(0.2))
-                        .frame(height: 100)
+                        .frame(height: 80)
                 }
                 .overlay {
                     Rectangle()
-                        .stroke(Color(.white), lineWidth: 1)
-                        .padding(1)
+                        .stroke(Color(.black), lineWidth: 2)
                 }
                 
                 Text(seeTranslation ? word.ukrainian : word.english)
                     .font(.system(size: 40))
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .frame(width: 188)
                     .lineLimit(1)
                     .minimumScaleFactor(0.3)
@@ -139,7 +133,9 @@ struct DesignRepeatWordsView: View {
             .rotation3DEffect(Angle(degrees: (seeTranslation ? 180 : 0)), axis: (x: 10, y: 0, z: 0))
             .animation(.spring(response: 0.7, dampingFraction: 0.7, blendDuration: 0))
             .onTapGesture {
-                seeTranslation.toggle()
+                if !showDeleteButton {
+                    seeTranslation.toggle()
+                }
             }
             
             if showDeleteButton {
@@ -157,12 +153,60 @@ struct DesignRepeatWordsView: View {
                     Image(systemName: "trash")
                         .font(.system(size: 30))
                 }
-                .frame(minWidth: 0, maxWidth: 50, minHeight: 0, maxHeight: .infinity)
+                .frame(width: 50, height: 82)
                 .background(Color("color5"))
                 .cornerRadius(20, corners: [.topRight, .bottomRight])
             }
         }
-        .padding(.top, 6)
         .padding(.horizontal, 24)
+    }
+}
+
+//MARK: - RepeatingWordsViewIsEmpty
+struct RepeatingWordsViewIsEmpty: View {
+    var body: some View {
+        VStack {
+            Text("Ви ще не додали жодного слова в розділ повторення, для цього виконайте послідовно такі дії:")
+                .font(.system(size: 30))
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+            HStack {
+                Image(systemName: "text.justify")
+                    .font(.system(size: 45))
+                
+                Text("+")
+                    .font(.system(size: 50))
+                    .foregroundColor(.black)
+                
+                
+                Image("dictionary")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                
+                Text("+")
+                    .font(.system(size: 50))
+                    .foregroundColor(.black)
+                
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 50))
+                
+                Text("+")
+                    .font(.system(size: 50))
+                    .foregroundColor(.black)
+                
+                Image("repeat")
+                    .resizable()
+                    .frame(width: 60, height: 60)
+                
+                
+            }
+            .minimumScaleFactor(0.3)
+            .lineLimit(1)
+            .foregroundColor(.white)
+            .padding(6)
+            .background(Color("color1"))
+            .cornerRadius(10)
+        }
+        .padding()
     }
 }

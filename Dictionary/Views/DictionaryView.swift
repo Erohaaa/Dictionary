@@ -1,6 +1,6 @@
 //
 //  ArrayWordsView.swift
-//  EnglishWords
+//  Dictionary
 //
 //  Created by Виталя on 21.11.2022.
 //
@@ -13,7 +13,7 @@ struct DictionaryView: View {
     let synthesizer = AVSpeechSynthesizer()
     @Binding var showDeleteButton: Bool
     @Binding var showAddToRepeatButton: Bool
-    @Binding var showAddEditView: Bool
+    @Binding var showFunctionalView: Bool
     @Binding var showMenuView: Bool
     @FetchRequest(
         sortDescriptors: [
@@ -34,7 +34,7 @@ struct DictionaryView: View {
                 } else {
                     ScrollView(showsIndicators: false) {
                         ForEach(words.indices, id: \.self) { index in
-                            DesignList(synthesizer: synthesizer, word: words[index], showDeleteButton: $showDeleteButton, showAddToRepeatButton: $showAddToRepeatButton)
+                            DictionaryListDesignView(synthesizer: synthesizer, word: words[index], showDeleteButton: $showDeleteButton, showAddToRepeatButton: $showAddToRepeatButton)
                         }
                     }
                     .padding()
@@ -54,10 +54,10 @@ struct DictionaryView: View {
                         }
                     } else {
                         Button(action: {
-                            showAddEditView.toggle()
+                            showFunctionalView.toggle()
                             
                         }) {
-                            Image(systemName: showAddEditView ? "chevron.up" : "chevron.down")
+                            Image(systemName: showFunctionalView ? "chevron.up" : "chevron.down")
                         }
                     }
                 }
@@ -65,7 +65,7 @@ struct DictionaryView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
                         showMenuView = true
-                        showAddEditView = false
+                        showFunctionalView = false
                         showDeleteButton = false
                         showAddToRepeatButton = false
                         
@@ -84,14 +84,17 @@ struct DictionaryView: View {
 //MARK: - Canvas
 struct ArrayWordsView_Previews: PreviewProvider {
     static var previews: some View {
-        DictionaryView(showDeleteButton: .constant(false), showAddToRepeatButton: .constant(true), showAddEditView: .constant(false), showMenuView: .constant(false))
+        DictionaryView(showDeleteButton: .constant(false),
+                       showAddToRepeatButton: .constant(true),
+                       showFunctionalView: .constant(false),
+                       showMenuView: .constant(false))
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
 
 
-//MARK: - DesignList
-struct DesignList: View {
+//MARK: - DictionaryListDesign
+struct DictionaryListDesignView: View {
     var synthesizer: AVSpeechSynthesizer
     @ObservedObject var word: Word
     @Binding var showDeleteButton: Bool

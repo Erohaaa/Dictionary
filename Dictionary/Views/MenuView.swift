@@ -1,6 +1,6 @@
 //
 //  MenuView.swift
-//  EnglishWords
+//  Dictionary
 //
 //  Created by Виталя on 12.12.2022.
 //
@@ -58,7 +58,7 @@ struct MenuView: View {
                 .padding(.vertical, 12)
             }
             .frame(width: 100)
-            .background(Color("color3"))
+            .background(depictedView == .showDictionaryView ? Color("color3") : Color("color1"))
             .cornerRadius(20, corners: [.bottomRight])
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
             .ignoresSafeArea()

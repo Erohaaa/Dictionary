@@ -1,17 +1,16 @@
 //
 //  NewWordView.swift
-//  EnglishWords
+//  Dictionary
 //
 //  Created by Виталя on 21.11.2022.
 //
 
 import SwiftUI
 
-struct NewWordView: View {
+struct AddingNewWordView: View {
     @State var english = ""
     @State var ukrainian = ""
     @State var newWordsAdded: [String] = []
-    
     @Binding var showNewWordView: Bool
     @Environment(\.managedObjectContext) var context
     @FocusState private var fieldInFocus: OnboardingField?
@@ -19,8 +18,10 @@ struct NewWordView: View {
     var body: some View {
         ZStack {
             VStack {
-                AddingNewWordView(english: $english, ukrainian: $ukrainian, newWordsAdded: $newWordsAdded, showNewWordView: $showNewWordView)
-                
+                AddingNewWordDesignView(english: $english,
+                                        ukrainian: $ukrainian,
+                                        newWordsAdded: $newWordsAdded,
+                                        showNewWordView: $showNewWordView)
                 Spacer()
             }
             .padding(.horizontal, 16)
@@ -43,7 +44,7 @@ struct NewWordView: View {
         }
     }
     
-    private func save() {
+    func save() {
         let word = Word(context: context)
         word.english = english
         word.ukrainian = ukrainian
@@ -63,15 +64,15 @@ struct NewWordView: View {
 
 
 //MARK: - Canvas
-struct NewWordView_Previews: PreviewProvider {
+struct AddingNewWordView_Previews: PreviewProvider {
     static var previews: some View {
-        NewWordView(showNewWordView: .constant(false))
+        AddingNewWordView(showNewWordView: .constant(false))
     }
 }
 
 
 //MARK: - AddingNewWordView
-struct AddingNewWordView: View {
+struct AddingNewWordDesignView: View {
     
     @Binding var english: String
     @Binding var ukrainian: String
@@ -84,6 +85,7 @@ struct AddingNewWordView: View {
     var body: some View {
         VStack {
             VStack {
+                
                 // Кнопки
                 HStack(alignment: .top) {
                     Button {
@@ -165,7 +167,8 @@ struct AddingNewWordView: View {
             
             // Додані слова
             if newWordsAdded.isEmpty {
-                Text("Ви ще не додали жодного нового слова.")
+                Text("З моменту останнього запуску Ви ще не додали жодного нового слова.")
+                    .font(.system(size: 20))
                     .multilineTextAlignment(.center)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 6)
@@ -215,3 +218,4 @@ struct AddingNewWordView: View {
         return text
     }
 }
+
