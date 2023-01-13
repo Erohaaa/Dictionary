@@ -76,8 +76,6 @@ struct DesignAddingNewWordView: View {
                     Button {
                         if !ukrainian.isEmpty && !english.isEmpty {
                             save()
-                        } else {
-                            print("Text field is empty.")
                         }
                         focusedField = .englishFieldInFocus
                         
@@ -93,7 +91,7 @@ struct DesignAddingNewWordView: View {
                 
                 // TextField 1
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Слово англійською".uppercased())
+                    Text(String(localized: "ENGLISH WORD"))
                         .font(.system(.headline, design: .rounded))
                     
                     TextField("", text: $english)
@@ -113,7 +111,7 @@ struct DesignAddingNewWordView: View {
                 
                 // TextField 2
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Переклад українською".uppercased())
+                    Text(String(localized: "TRANSLATION"))
                         .font(.system(.headline, design: .rounded))
                     
                     TextField("", text: $ukrainian)
@@ -141,7 +139,7 @@ struct DesignAddingNewWordView: View {
             
             
             if newWordsAdded.isEmpty {
-                Text("З моменту останнього запуску Ви ще не додали жодного нового слова.")
+                Text("You haven't added any new words since the last run.")
                     .font(.system(size: 20))
                     .multilineTextAlignment(.center)
                     .padding(.vertical, 12)
@@ -150,7 +148,7 @@ struct DesignAddingNewWordView: View {
             } else {
                 VStack(spacing: 6) {
                     HStack {
-                        Text("Додані слова:")
+                        Text("Added words:")
                         Spacer()
                     }
                     

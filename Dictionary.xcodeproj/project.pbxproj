@@ -11,6 +11,7 @@
 		0426E6E4296DBFFB00E5B5C5 /* DictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0426E6E3296DBFFB00E5B5C5 /* DictionaryView.swift */; };
 		042D4503294249CE004CA394 /* SectionToRepeatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042D4502294249CE004CA394 /* SectionToRepeatView.swift */; };
 		045631C0294E97C00098BE84 /* Models&Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045631BF294E97C00098BE84 /* Models&Extensions.swift */; };
+		0499F10A2971D46A00EB429A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0499F1082971D46A00EB429A /* Localizable.strings */; };
 		049F3934292BB79C009252D3 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049F3933292BB79C009252D3 /* Dictionary.swift */; };
 		049F3938292BB79E009252D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 049F3937292BB79E009252D3 /* Assets.xcassets */; };
 		049F393B292BB79E009252D3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 049F393A292BB79E009252D3 /* Preview Assets.xcassets */; };
@@ -25,6 +26,7 @@
 		0426E6E3296DBFFB00E5B5C5 /* DictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryView.swift; sourceTree = "<group>"; };
 		042D4502294249CE004CA394 /* SectionToRepeatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionToRepeatView.swift; sourceTree = "<group>"; };
 		045631BF294E97C00098BE84 /* Models&Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models&Extensions.swift"; sourceTree = "<group>"; };
+		0499F1092971D46A00EB429A /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
 		049F3930292BB79C009252D3 /* Dictionary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dictionary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		049F3933292BB79C009252D3 /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		049F3937292BB79E009252D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 				049F394A292BB89A009252D3 /* CoreData */,
 				0435FF41294A108200D2B5DD /* Models */,
 				049F3939292BB79E009252D3 /* Preview Content */,
+				0499F1082971D46A00EB429A /* Localizable.strings */,
 				049F3937292BB79E009252D3 /* Assets.xcassets */,
 			);
 			path = Dictionary;
@@ -154,6 +157,7 @@
 			knownRegions = (
 				en,
 				Base,
+				uk,
 			);
 			mainGroup = 049F3927292BB79C009252D3;
 			productRefGroup = 049F3931292BB79C009252D3 /* Products */;
@@ -171,6 +175,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				049F393B292BB79E009252D3 /* Preview Assets.xcassets in Resources */,
+				0499F10A2971D46A00EB429A /* Localizable.strings in Resources */,
 				049F3938292BB79E009252D3 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -195,6 +200,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		0499F1082971D46A00EB429A /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0499F1092971D46A00EB429A /* uk */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		049F3941292BB79E009252D3 /* Debug */ = {

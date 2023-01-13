@@ -12,13 +12,13 @@ struct MainView: View {
         TabView(selection: $selectedTabIndex) {
             DictionaryView()
                 .tabItem {
-                    Label("Словник", systemImage: "text.book.closed.fill")
+                    Label("Dictionary", systemImage: "text.book.closed.fill")
                 }
                 .tag(0)
             
             SectionToRepeatView()
                 .tabItem {
-                    Label("Повторення", systemImage: "repeat")
+                    Label("Repeating", systemImage: "repeat")
                 }
                 .tag(1)
         }

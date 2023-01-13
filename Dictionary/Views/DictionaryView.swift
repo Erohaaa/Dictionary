@@ -44,7 +44,7 @@ struct DictionaryView: View {
                 .padding(.vertical, 6)
                 .buttonStyle(BorderlessButtonStyle())
                 .listStyle(.plain)
-                .navigationTitle("Словник")
+                .navigationTitle("Dictionary")
                 .navigationBarTitleDisplayMode(.large)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -95,12 +95,12 @@ struct DictionaryView: View {
         }
         .animation(.spring(response: 0.6, dampingFraction: 1, blendDuration: 0), value: showFunctionalView)
         
-        .alert("Ви впевнені, що хочете повністю очистити словник?",
+        .alert("Are you sure you want to delete all words?",
                isPresented: $deletionConfirmation,
                actions: {
-            Button("Відмінити", role: .cancel, action: {})
+            Button("Cancel", role: .cancel, action: {})
             
-            Button("Видалити", role: .destructive, action: {
+            Button("DELETE", role: .destructive, action: {
                 showFunctionalView = false
                 
                 removeAllFromDictionary(words: words)
@@ -111,7 +111,7 @@ struct DictionaryView: View {
         
         .searchable(text: $searchText,
                     placement: .navigationBarDrawer(displayMode: .automatic),
-                    prompt: "Знайти слово(а)...")
+                    prompt: "Seatch word(s)...")
         
         .onChange(of: searchText) { searchText in
             let predicate = searchText.isEmpty ? NSPredicate(value: true) : NSPredicate(format: "english CONTAINS[c] %@ OR ukrainian CONTAINS[c] %@", searchText, searchText)
@@ -256,7 +256,7 @@ struct FunctionalForDictionaryView: View {
                     showFunctionalView = false
                 } label: {
                     HStack {
-                        Text("Додати в повторення")
+                        Text("Add to repeat")
                         Spacer()
                         Image("repeat")
                             .resizable()
@@ -268,7 +268,7 @@ struct FunctionalForDictionaryView: View {
                     deletionConfirmation = true
                 } label: {
                     HStack {
-                        Text("Видалити всі слова")
+                        Text("Delete all words")
                             .foregroundColor(.red)
                         Spacer()
                         Image("redtrash")

@@ -48,7 +48,7 @@ struct SectionToRepeatView: View {
                         SectionToRepeatViewEmpty()
                     }
                 }
-                .navigationTitle("Повторення слів")
+                .navigationTitle("Repeating of words")
                 .navigationBarTitleDisplayMode(.large)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -82,12 +82,12 @@ struct SectionToRepeatView: View {
         }
         .animation(.spring(response: 0.6, dampingFraction: 1, blendDuration: 0), value: showFunctionalView)
         
-        .alert("Ви впевнені, що хочете повністю очистити розділ повторення?",
+        .alert("Are you sure you want to delete all words?",
                isPresented: $deletionConfirmation,
                actions: {
-            Button("Відмінити", role: .cancel, action: {})
+            Button("Cancel", role: .cancel, action: {})
             
-            Button("Видалити", role: .destructive, action: {
+            Button("DELETE", role: .destructive, action: {
                 showFunctionalView = false
                 showDeleteButton = false
                 removeAllFromRepeat(words: words)
@@ -178,7 +178,7 @@ struct DesignListForSectionToRepeatView: View {
 struct SectionToRepeatViewEmpty: View {
     var body: some View {
         VStack {
-            Text("Ви ще не додали жодного слова в розділ повторення, для цього виконайте послідовно такі дії:")
+            Text("You haven't added a word to the repetition section yet, to do so follow these steps in sequence:")
                 .font(.system(size: 30))
                 .foregroundColor(Color("Black&White"))
                 .multilineTextAlignment(.center)
@@ -229,7 +229,7 @@ struct FunctionalSectionToRepeatView: View {
                     showFunctionalView = false
                 } label: {
                     HStack {
-                        Text("Видалити вибірково")
+                        Text("Delete selectively")
                         Spacer()
                         Image("orangetrash")
                             .resizable()
@@ -242,7 +242,7 @@ struct FunctionalSectionToRepeatView: View {
                     deletionConfirmation = true
                 } label: {
                     HStack {
-                        Text("Видалити всі слова")
+                        Text("Delete all words")
                         Spacer()
                         Image("redtrash")
                             .resizable()
