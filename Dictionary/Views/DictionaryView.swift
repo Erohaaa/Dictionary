@@ -1,8 +1,8 @@
 //
-//  ArrayWordsView.swift
+//  DictionaryView2.swift
 //  Dictionary
 //
-//  Created by Виталя on 21.11.2022.
+//  Created by Виталя on 10.01.2023.
 //
 
 import SwiftUI
@@ -11,10 +11,15 @@ import AVFoundation
 struct DictionaryView: View {
     
     let synthesizer = AVSpeechSynthesizer()
-    @Binding var showDeleteButton: Bool
-    @Binding var showAddToRepeatButton: Bool
-    @Binding var showFunctionalView: Bool
-    @Binding var showMenuView: Bool
+    let screen = UIScreen.main.bounds
+    
+    @State private var searchText = ""
+    @State var showFunctionalView = false
+    @State var showNewWordView = false
+    @State var showAddToRepeatButton = false
+    @State var deletionConfirmation = false
+    
+    
     @FetchRequest(
         sortDescriptors: [
             SortDescriptor(\.timestamp, order: .reverse)
@@ -24,86 +29,149 @@ struct DictionaryView: View {
     
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color("color1")
-                    .ignoresSafeArea()
-                if words.isEmpty {
-                    ifDictionaryIsEmpty()
+        ZStack {
+            NavigationView {
+                List {
+                    ForEach(words.indices, id: \.self) { index in
+                        DesignListDictionaryView(synthesizer: synthesizer,
+                                                 word: words[index],
+                                                 showAddToRepeatButton: $showAddToRepeatButton)
+                    }
+                    .onDelete(perform: deleteRecord)
+                    .listRowSeparator(.hidden)
                     
-                } else {
-                    ScrollView(showsIndicators: false) {
-                        ForEach(words.indices, id: \.self) { index in
-                            DictionaryListDesignView(synthesizer: synthesizer, word: words[index], showDeleteButton: $showDeleteButton, showAddToRepeatButton: $showAddToRepeatButton)
-                        }
-                    }
-                    .padding()
                 }
-            }
-            .navigationTitle("Словник")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if showDeleteButton || showAddToRepeatButton {
-                        Button(action: {
-                            showDeleteButton = false
-                            showAddToRepeatButton = false
+                .padding(.vertical, 6)
+                .buttonStyle(BorderlessButtonStyle())
+                .listStyle(.plain)
+                .navigationTitle("Словник")
+                .navigationBarTitleDisplayMode(.large)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack {
                             
-                        }) {
-                            Image(systemName: "xmark")
-                        }
-                    } else {
-                        Button(action: {
-                            showFunctionalView.toggle()
+                            if !words.isEmpty {
+                                if showAddToRepeatButton {
+                                    Button(action: {
+                                        showAddToRepeatButton = false
+                                    }) {
+                                        Image(systemName: "xmark")
+                                    }
+                                } else {
+                                    Button(action: {
+                                        showFunctionalView.toggle()
+                                    }) {
+                                        Image(systemName: showFunctionalView ? "chevron.up" : "chevron.down")
+                                    }
+                                }
+                            }
                             
-                        }) {
-                            Image(systemName: showFunctionalView ? "chevron.up" : "chevron.down")
+                            Button(action: {
+                                showNewWordView = true
+                                showAddToRepeatButton = false
+                                showFunctionalView = false
+                            }) {
+                                Image(systemName: "plus")
+                            }
                         }
                     }
                 }
-                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        showMenuView = true
-                        showFunctionalView = false
-                        showDeleteButton = false
-                        showAddToRepeatButton = false
-                        
-                    } label: {
-                        Image(systemName: "text.justify")
-                    }
-                }
-                
+                .accentColor(Color("Black&White"))
             }
-            .accentColor(.white)
+            .blur(radius: showNewWordView ? 10 : 0, opaque: true)
+            .ignoresSafeArea()
+            
+            
+            if showFunctionalView {
+                FunctionalForDictionaryView(showFunctionalView: $showFunctionalView,
+                                            showAddToRepeatButton: $showAddToRepeatButton,
+                                            deletionConfirmation: $deletionConfirmation)
+            }
+            
+            AddingNewWordView(showNewWordView: $showNewWordView)
+                .offset(y: showNewWordView ? 0 : -screen.height)
+                .animation(.spring(response: 0.6, dampingFraction: 1, blendDuration: 0), value: showNewWordView)
+            
+        }
+        .animation(.spring(response: 0.6, dampingFraction: 1, blendDuration: 0), value: showFunctionalView)
+        
+        .alert("Ви впевнені, що хочете повністю очистити словник?",
+               isPresented: $deletionConfirmation,
+               actions: {
+            Button("Відмінити", role: .cancel, action: {})
+            
+            Button("Видалити", role: .destructive, action: {
+                showFunctionalView = false
+                
+                removeAllFromDictionary(words: words)
+                
+            })},
+               message: { Text("") }
+        )
+        
+        .searchable(text: $searchText,
+                    placement: .navigationBarDrawer(displayMode: .automatic),
+                    prompt: "Знайти слово(а)...")
+        
+        .onChange(of: searchText) { searchText in
+            let predicate = searchText.isEmpty ? NSPredicate(value: true) : NSPredicate(format: "english CONTAINS[c] %@ OR ukrainian CONTAINS[c] %@", searchText, searchText)
+            words.nsPredicate = predicate
+        }
+    }
+    
+    private func deleteRecord(indexSet: IndexSet) {
+        for index in indexSet {
+            let itemToDelete = words[index]
+            context.delete(itemToDelete)
+        }
+        DispatchQueue.main.async {
+            do {
+                try context.save()
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    private func removeAllFromDictionary(words: FetchedResults<Word>) {
+        for word in words {
+            context.delete(word)
+        }
+        do {
+            try context.save()
+        } catch {
+            print(error)
         }
     }
 }
 
 
 //MARK: - Canvas
-struct ArrayWordsView_Previews: PreviewProvider {
+struct DictionaryView_Previews: PreviewProvider {
     static var previews: some View {
-        DictionaryView(showDeleteButton: .constant(false),
-                       showAddToRepeatButton: .constant(true),
-                       showFunctionalView: .constant(false),
-                       showMenuView: .constant(false))
+        DictionaryView()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        
+        DictionaryView()
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .preferredColorScheme(.dark)
     }
 }
 
 
-//MARK: - DictionaryListDesign
-struct DictionaryListDesignView: View {
+//MARK: - DictionaryListDesignView
+struct DesignListDictionaryView: View {
+    
     var synthesizer: AVSpeechSynthesizer
     @ObservedObject var word: Word
-    @Binding var showDeleteButton: Bool
     @Binding var showAddToRepeatButton: Bool
     @Environment(\.managedObjectContext) var context
     
     
     var body: some View {
         HStack(spacing: -2) {
+            
+            // Кнопка відтворення слова
             Button {
                 let utterance = AVSpeechUtterance(string: word.english)
                 utterance.voice = AVSpeechSynthesisVoice(language: "en-GB")
@@ -114,15 +182,16 @@ struct DictionaryListDesignView: View {
                     .font(.system(size: 30))
             }
             .frame(minWidth: 0, maxWidth: 50, minHeight: 0, maxHeight: .infinity)
-            .background(Color("color3"))
+            .background(Color("Olive"))
             .cornerRadius(20, corners: [.topLeft, .bottomLeft])
             
             Spacer()
             
+            // Текст
             VStack(alignment: .center) {
                 Text(word.english)
                     .frame(width: 230)
-                    .foregroundColor(.black)
+                    .foregroundColor(Color("Black&White"))
                     .font(.system(size: 40))
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
@@ -130,36 +199,18 @@ struct DictionaryListDesignView: View {
                 
                 Text(word.ukrainian)
                     .frame(width: 230)
-                    .foregroundColor(.black.opacity(0.7))
+                    .foregroundColor(Color("Black&White").opacity(0.7))
                     .font(.system(size: 20))
                     .minimumScaleFactor(0.5)
+                    .multilineTextAlignment(.center)
             }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-            .background(Color("color2"))
-            .cornerRadius(showDeleteButton || showAddToRepeatButton ? 0 : 20, corners: [.topRight, .bottomRight])
+            .background(Color("Olive2"))
+            .cornerRadius(showAddToRepeatButton ? 0 : 20, corners: [.topRight, .bottomRight])
             
             Spacer()
             
-            if showDeleteButton {
-                Button {
-                    withAnimation {
-                        context.delete(word)
-                        do {
-                            try context.save()
-                        } catch {
-                            print("Error (delete)")
-                        }
-                    }
-                } label: {
-                    Image(systemName: "trash")
-                        .foregroundColor(.white)
-                        .font(.system(size: 30))
-                }
-                .frame(minWidth: 0, maxWidth: 50, minHeight: 0, maxHeight: .infinity)
-                .background(Color("color5"))
-                .cornerRadius(20, corners: [.topRight, .bottomRight])
-            }
-            
+            // Кнопка додавання в повторення
             if showAddToRepeatButton {
                 Button {
                     word.inRepetition.toggle()
@@ -170,37 +221,77 @@ struct DictionaryListDesignView: View {
                     }
                 } label: {
                     Image(systemName: word.inRepetition ? "checkmark" : "plus.circle")
-                        .foregroundColor(.white)
+                        .foregroundColor(Color("Black&White"))
                         .font(.system(size: 30))
                 }
                 .frame(minWidth: 0, maxWidth: 50, minHeight: 0, maxHeight: .infinity)
-                .background(word.inRepetition ? Color("color6") : Color("color2"))
+                .background(word.inRepetition ? Color("Checkmark") : Color("Olive2"))
                 .cornerRadius(20, corners: [.topRight, .bottomRight])
             }
         }
-        .animation(.linear(duration: 0.2))
+        .animation(.easeOut, value: showAddToRepeatButton)
     }
 }
 
-//MARK: - ifDictionaryIsEmpty
-struct ifDictionaryIsEmpty: View {
+
+//MARK: - FunctionalForDictionaryView
+struct FunctionalForDictionaryView: View {
+    @Binding var showFunctionalView: Bool
+    @Binding var showAddToRepeatButton: Bool
+    @Binding var deletionConfirmation: Bool
+    
+    
     var body: some View {
-        VStack {
-            HStack {
-                Text("Щоб додати слова")
-                    .font(.system(size: 25))
-                    .minimumScaleFactor(0.3)
-                    .lineLimit(1)
+        ZStack {
+            Color.white.opacity(0.0001)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    showFunctionalView = false
+                }
+            
+            // Кнопки
+            VStack(alignment: .leading, spacing: 12) {
+                Button {
+                    showAddToRepeatButton = true
+                    showFunctionalView = false
+                } label: {
+                    HStack {
+                        Text("Додати в повторення")
+                        Spacer()
+                        Image("repeat")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                    }
+                }
                 
-                Image("finger")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 70)
+                Button {
+                    deletionConfirmation = true
+                } label: {
+                    HStack {
+                        Text("Видалити всі слова")
+                            .foregroundColor(.red)
+                        Spacer()
+                        Image("redtrash")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                    }
+                }
             }
-            Spacer()
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
+            .padding(6)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(.black, lineWidth: 2)
+            )
+            .font(.system(size: 20))
+            .background(Color("Olive for functional view"))
+            .cornerRadius(10)
+            .frame(width: 240)
+            .foregroundColor(.black)
+            .padding(.horizontal, 50)
+            .padding(.top, 40)
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topTrailing)
         }
-        .padding(.top, 20)
     }
 }
-
-

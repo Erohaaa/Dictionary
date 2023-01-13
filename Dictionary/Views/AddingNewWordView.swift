@@ -13,51 +13,22 @@ struct AddingNewWordView: View {
     @State var newWordsAdded: [String] = []
     @Binding var showNewWordView: Bool
     @Environment(\.managedObjectContext) var context
-    @FocusState private var fieldInFocus: OnboardingField?
     
     var body: some View {
         ZStack {
+            Color.white.opacity(0.0001)
+                .onTapGesture {
+                    showNewWordView = false
+                }
+            
             VStack {
-                AddingNewWordDesignView(english: $english,
+                DesignAddingNewWordView(english: $english,
                                         ukrainian: $ukrainian,
                                         newWordsAdded: $newWordsAdded,
                                         showNewWordView: $showNewWordView)
                 Spacer()
             }
             .padding(.horizontal, 16)
-            .padding(.top, 50)
-            .cornerRadius(50)
-            .ignoresSafeArea()
-        }
-        .background(.white.opacity(0.001))
-        .onSubmit {
-            switch fieldInFocus {
-            case .englishFieldInFocus:
-                fieldInFocus = .ukranianFieldInFocus
-            default:
-                if !ukrainian.isEmpty && !english.isEmpty {
-                    save()
-                } else {
-                    print("Text field is empty.")
-                }
-            }
-        }
-    }
-    
-    func save() {
-        let word = Word(context: context)
-        word.english = english
-        word.ukrainian = ukrainian
-        word.timestamp = Date()
-        word.inRepetition = false
-        do {
-            try context.save()
-            newWordsAdded.append(english)
-            english = ""
-            ukrainian = ""
-        } catch {
-            print("Failed to save the record...")
-            print(error.localizedDescription)
         }
     }
 }
@@ -67,12 +38,15 @@ struct AddingNewWordView: View {
 struct AddingNewWordView_Previews: PreviewProvider {
     static var previews: some View {
         AddingNewWordView(showNewWordView: .constant(false))
+        
+        AddingNewWordView(showNewWordView: .constant(false))
+            .preferredColorScheme(.dark)
     }
 }
 
 
-//MARK: - AddingNewWordView
-struct AddingNewWordDesignView: View {
+//MARK: - DesignAddingNewWordView
+struct DesignAddingNewWordView: View {
     
     @Binding var english: String
     @Binding var ukrainian: String
@@ -93,7 +67,7 @@ struct AddingNewWordDesignView: View {
                         focusedField = nil
                     } label: {
                         Image(systemName: "xmark.circle")
-                            .foregroundColor(.black)
+                            .foregroundColor(Color("Black&White"))
                             .font(.system(size: 30))
                     }
                     
@@ -109,7 +83,7 @@ struct AddingNewWordDesignView: View {
                         
                     } label: {
                         Image(systemName: "checkmark.circle")
-                            .foregroundColor(.black)
+                            .foregroundColor(Color("Black&White"))
                             .font(.system(size: 40))
                     }
                 }
@@ -121,10 +95,9 @@ struct AddingNewWordDesignView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Слово англійською".uppercased())
                         .font(.system(.headline, design: .rounded))
-                        .foregroundColor(Color("color3"))
                     
                     TextField("", text: $english)
-                        .foregroundColor(.black)
+                        .foregroundColor(Color("Black&White"))
                         .focused($focusedField, equals: .englishFieldInFocus)
                         .textContentType(.givenName)
                         .submitLabel(.next)
@@ -132,7 +105,7 @@ struct AddingNewWordDesignView: View {
                         .padding(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
-                                .stroke(Color("color3"), lineWidth: 2)
+                                .stroke(Color("Black&White"), lineWidth: 2)
                                 .padding(.vertical, 5)
                         )
                 }
@@ -142,10 +115,9 @@ struct AddingNewWordDesignView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Переклад українською".uppercased())
                         .font(.system(.headline, design: .rounded))
-                        .foregroundColor(Color("color3"))
                     
                     TextField("", text: $ukrainian)
-                        .foregroundColor(.black)
+                        .foregroundColor(Color("Black&White"))
                         .focused($focusedField, equals: .ukranianFieldInFocus)
                         .textContentType(.givenName)
                         .submitLabel(.next)
@@ -153,7 +125,7 @@ struct AddingNewWordDesignView: View {
                         .padding(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
-                                .stroke(Color("color3"), lineWidth: 2)
+                                .stroke(Color("Black&White"), lineWidth: 2)
                                 .padding(.vertical, 5)
                         )
                 }
@@ -163,35 +135,68 @@ struct AddingNewWordDesignView: View {
             .padding(.bottom, 6)
             .padding(.horizontal, 6)
             .frame(height: 230)
-            .background(Color("color2"))
+            .background(Color("White&Black").opacity(0.7))
             
             // Додані слова
+            
+            
             if newWordsAdded.isEmpty {
                 Text("З моменту останнього запуску Ви ще не додали жодного нового слова.")
                     .font(.system(size: 20))
                     .multilineTextAlignment(.center)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 6)
+                
             } else {
-                VStack {
+                VStack(spacing: 6) {
                     HStack {
                         Text("Додані слова:")
                         Spacer()
                     }
-                    .padding(.horizontal, 6)
                     
-                    HStack {
-                        Text("\(arrayConversion(newWordsAdded))")
-                        Spacer()
+                    ScrollView {
+                        HStack {
+                            Text("\(arrayConversion(newWordsAdded))")
+                            Spacer()
+                        }
                     }
-                    .padding(.bottom, 12)
-                    .padding(.horizontal, 6)
+                    .padding(3)
+                    .background(.black.opacity(0.08))
+                    .frame(maxHeight: 70)
+                    .cornerRadius(5)
+                }
+                .padding(.bottom, 12)
+                .padding(.horizontal, 12)
+            }
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color("Black&White"), lineWidth: 2)
+                .padding(1)
+        )
+        .background(Color("Olive"))
+        .cornerRadius(20)
+        .onChange(of: showNewWordView, perform: { _ in
+            focusedField = nil
+        })
+        .onSubmit {
+            if !showNewWordView {
+                focusedField = nil
+            } else {
+                switch focusedField {
+                case .englishFieldInFocus:
+                    focusedField = .ukranianFieldInFocus
+                default:
+                    if !ukrainian.isEmpty && !english.isEmpty {
+                        save()
+                        focusedField = .englishFieldInFocus
+                        
+                    }
                 }
             }
         }
-        .background(Color("color3"))
-        .cornerRadius(20)
     }
+    
     
     private func save() {
         let word = Word(context: context)
@@ -213,7 +218,12 @@ struct AddingNewWordDesignView: View {
     func arrayConversion(_ arrayString: [String]) -> String {
         var text = ""
         for word in arrayString {
-            text += "\(word), "
+            if !text.isEmpty {
+                text = "\(word), " + text
+            } else {
+                text = "\(word). " + text
+                
+            }
         }
         return text
     }

@@ -14,11 +14,6 @@ struct TextFieldWord {
     var ukranian: String
 }
 
-enum MenuViewModel {
-    case showDictionaryView
-    case showRepeatWordView
-}
-
 enum OnboardingField: Hashable {
     case englishFieldInFocus
     case ukranianFieldInFocus
