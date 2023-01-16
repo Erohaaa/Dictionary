@@ -1,8 +1,14 @@
 /* No comment provided by engineer. */
-"Add to repeat" = "Додати в повторення";
+"+" = "+";
 
 /* No comment provided by engineer. */
-"Added words:" = "Додані слова:";
+"Add new word(s)" = "Додати нове слово";
+
+/* No comment provided by engineer. */
+"Add to repeat" = "Додатив в повторення";
+
+/* No comment provided by engineer. */
+"Added words:" = "Додані слова";
 
 /* No comment provided by engineer. */
 "Are you sure you want to delete all words?" = "Ви впевнені, що хочете видалити всі слова?";
@@ -23,7 +29,10 @@
 "Dictionary" = "Словник";
 
 /* No comment provided by engineer. */
-"ENGLISH WORD" = "СЛОВО АНГЛІЙСЬКОЮ";
+"ENGLISH WORD" = "АНГЛІЙСЬКЕ СЛОВО";
+
+/* No comment provided by engineer. */
+"Open repeating" = "Відкрити повторення";
 
 /* No comment provided by engineer. */
 "Repeating" = "Повторення";
@@ -38,8 +47,8 @@
 "TRANSLATION" = "ПЕРЕКЛАД";
 
 /* No comment provided by engineer. */
-"You haven't added a word to the repetition section yet, to do so follow these steps in sequence:" = "Ви ще не додали жодного слова в розділ повторення, для цього виконайте послідовно такі дії:";
+"You haven't added a word to the repetition section yet, to do so follow these steps in sequence:" = "Ви ще не додали жодного слова до розділу повторення, щоб зробити це, виконайте такій дії в послідовності:";
 
 /* No comment provided by engineer. */
-"You haven't added any new words since the last run." = "З моменту останнього запуску Ви ще не додали жодного нового слова.";
+"You haven't added any new words since the last run." = "Ви не додали жодного слова з моменту останнього запуску.";
 

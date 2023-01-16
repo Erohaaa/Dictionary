@@ -78,6 +78,12 @@ struct DictionaryView: View {
                 }
                 .accentColor(Color("Black&White"))
             }
+            .onOpenURL(perform: { url in
+                switch url.path {
+                case "/NewWord": showNewWordView = true
+                default: return
+                }
+            })
             .blur(radius: showNewWordView ? 10 : 0, opaque: true)
             .ignoresSafeArea()
             

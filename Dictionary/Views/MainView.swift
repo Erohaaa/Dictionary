@@ -23,6 +23,13 @@ struct MainView: View {
                 .tag(1)
         }
         .accentColor(Color("Olive"))
+        .onOpenURL(perform: { url in
+            switch url.path {
+            case "/NewWord": selectedTabIndex = 0
+            case "/OpenRepeating": selectedTabIndex = 1
+            default: return
+            }
+        })
     }
 }
 
